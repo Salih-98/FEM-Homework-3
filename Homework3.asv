@@ -115,9 +115,4 @@ K3_local = EA_t/L3 * [1 -1; -1 1];
 x13 = 0; z13 = 0;
 x14 = 0; z14 = L3;
 C13 = (x14 - x13)/L3;
-C23 = (z14 - z13)/L3;
-
-% Transformation matrix
-TM3 = [C13 C23 0 0; 0 0 C13 C23];
-K3_global = TM3' * K3_local * TM3;
-Kr_global_reduced = 
+C23 = 
