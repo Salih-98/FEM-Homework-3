@@ -47,7 +47,7 @@ L1 = b;
 
 % Area A as the function of Ksi
 syms ksi 
-side = 0.799989 - ksi*0.160011;
+side = (t1-t2) - ksi*0.160011;
 A = expand(side^2);
 A = vpa(A,4);
 
@@ -115,4 +115,9 @@ K3_local = EA_t/L3 * [1 -1; -1 1];
 x13 = 0; z13 = 0;
 x14 = 0; z14 = L3;
 C13 = (x14 - x13)/L3;
-C23 = 
+C23 = (z14 - z13)/L3;
+
+% Transformation matrix
+TM3 = [C13 C23 0 0; 0 0 C13 C23];
+K3_global = TM3' * K3_local * TM3;
+Kr_global_reduced = 
