@@ -32,7 +32,7 @@ t2 = t1/1.5;
 %% Material
 Eb = (4 + 0.25*X)*10^6;
 EA_24 = Eb * t2^2;
-EI_24 = Eb * t2^2/12;
+EI_24 = (Eb * t2^4)/12;
 EA_t = (3+0.15*W)*10^5;
 
 %% Loading
@@ -90,7 +90,7 @@ K1red = TM1red' * K1_loc * TM1red;
 ksi = -1/3;
 N = (1/4) * (1+ksi)^2*(2-ksi);
 
-Kspring = N * ks*N;
+Kspring_1 = N * ks*N;
 
 
 %% Element 2 - Bernoulli beam
@@ -127,8 +127,8 @@ L4 = sqrt(a^2 + d^2);
 K4 = BernoulliElementStiffnessMatrix(EA_24,EI_24,L2);
 K4red = applyBC(K2,1,1,1,1,1,0);
 
-alfa14 = -atand(a/d);
-alfa24 = 270+alfa14;
+alfa14 = 360-atand(a/d);
+alfa24 = 270-alfa14;
 C14 = cosd(alfa14);
 C24 = cosd(alfa24);
 TM4 = getTransformationMatrix(C14,C24);
@@ -164,7 +164,7 @@ I = vpa(I,4);
 % B matrix for w
 Bw = (2/L5)^2 * [-3*ksi/2 -(1+3*ksi)*L1/4];
 
-% Element matrix for element 1 - bending part
+% Element matrix for element 5 - bending part
 K5_loc_bending = Bw' * Eb * I * Bw * J;
 K5_loc_bending = int(K5_loc_bending,-1,1);
 K5_loc_bending_reduced = eval(K5_loc_bending(1,1));
@@ -178,5 +178,11 @@ C25 = cosd(180);
 TM5 = getTransformationMatrix(C15,C25);
 TM5red = applyBCtransformationMatrix(TM5,0,0,0,1,1,0);
 
-% Global element matrix - element 1
+% Global element matrix - element 5
 K5red = TM5red' * K5_loc * TM5red;
+
+%% Element 5 - Spring applied at a generic point along the beam
+ksi = 1/3;
+N = (1/4) * (1-ksi)^2*(2+ksi);
+
+Kspring_5 = N * ks*N;
