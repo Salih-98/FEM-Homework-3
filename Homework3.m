@@ -121,3 +121,62 @@ C23 = (z14 - z13)/L3;
 TM3 = [C13 C23 0 0; 0 0 C13 C23];
 K3_global = TM3' * K3_local * TM3;
 K3_global_reduced = K3_global(1:2,1:2);
+
+%% Element 4 - beam
+L4 = sqrt(a^2 + d^2);
+K4 = BernoulliElementStiffnessMatrix(EA_24,EI_24,L2);
+K4red = applyBC(K2,1,1,1,1,1,0);
+
+alfa14 = -atand(a/d);
+alfa24 = 270+alfa14;
+C14 = cosd(alfa14);
+C24 = cosd(alfa24);
+TM4 = getTransformationMatrix(C14,C24);
+TM4red = applyBCtransformationMatrix(TM4,1,1,1,1,1,0);
+
+K4red = TM4red' * K4red *TM4red;
+
+%% Element 5 - beam
+
+L5 = b;
+
+% Area A as the function of Ksi
+syms ksi 
+side = t2 + ((t1-t2)/L5)*L5*(1+ksi)/2;
+A = expand(side^2);
+A = vpa(A,4);
+
+% B matrix for u 
+Bu = [-1/L5 1/L5];
+
+% Jacobian 
+J = L5/2;
+
+% Element matrix for element 1 - axial part
+K5_loc_axial = Bu' * Eb * A * Bu * J;
+K5_loc_axial = int(K5_loc_axial, -1,1);
+K5_loc_axial_reduced = eval(K5_loc_axial(1,1));
+
+% Moment of inertia as a function of ksi
+I = expand((side^4)/12);
+I = vpa(I,4);
+
+% B matrix for w
+Bw = (2/L5)^2 * [-3*ksi/2 -(1+3*ksi)*L1/4];
+
+% Element matrix for element 1 - bending part
+K5_loc_bending = Bw' * Eb * I * Bw * J;
+K5_loc_bending = int(K5_loc_bending,-1,1);
+K5_loc_bending_reduced = eval(K5_loc_bending(1,1));
+
+% Local element matrix 
+K5_loc = [K5_loc_axial_reduced 0; 0 K5_loc_bending_reduced ];
+
+% Transformation matrix
+C15 = cosd(90);
+C25 = cosd(180);
+TM5 = getTransformationMatrix(C15,C25);
+TM5red = applyBCtransformationMatrix(TM5,0,0,0,1,1,0);
+
+% Global element matrix - element 1
+K5red = TM5red' * K5_loc * TM5red;
