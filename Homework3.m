@@ -19,7 +19,7 @@ addpath('calculationFunctions')
 % Extract W, X, Y, Z from the immatrikulation number
 % TODO: Make it so the user can input it during execution, later.
 
-iNum = '108022249956';
+iNum = '108022241234';
 % Ali
 %iNum = '108022249396';
 % TO compare with Abdulkareem
